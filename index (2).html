@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Long Vowels — English Pronunciation Lesson</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0d1b2a;overflow:hidden;height:100vh;width:100vw}
+#app{width:100vw;height:100vh;display:flex;flex-direction:column}
+#progress{position:fixed;top:0;left:0;height:5px;background:linear-gradient(90deg,#ffb74d,#ffd54f);z-index:99;transition:width .3s ease;border-radius:0 3px 3px 0}
+#slides{flex:1;position:relative;overflow:hidden;min-height:0}
+.slide{position:absolute;inset:0;display:none;flex-direction:column}
+.slide.active{display:flex}
+
+/* NAV */
+#nav{height:48px;background:#0a141f;display:flex;align-items:center;justify-content:center;gap:14px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.08)}
+#nav button{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:13px;padding:6px 20px;border-radius:20px;cursor:pointer;transition:background .2s;font-family:inherit;letter-spacing:.3px}
+#nav button:hover{background:rgba(255,255,255,.22)}
+#nav button:disabled{opacity:.25;cursor:default}
+#counter{color:rgba(255,255,255,.45);font-size:12px;min-width:60px;text-align:center}
+
+/* SHARED */
+.s-head{padding:12px 30px;font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px;flex-shrink:0;letter-spacing:.2px}
+.badge{background:rgba(255,255,255,.16);border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600}
+.s-body{flex:1;display:flex;padding:0 26px 12px;gap:22px;min-height:0;overflow:hidden}
+.card{border-radius:14px;padding:14px 18px}
+.label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;opacity:.5;margin-bottom:6px}
+
+/* ── TITLE ── */
+.title-slide{background:linear-gradient(140deg,#1a0d00 0%,#2d1800 55%,#1a0d00 100%);align-items:center;justify-content:center;text-align:center}
+.title-slide h1{font-size:clamp(46px,8.5vw,96px);font-weight:900;color:#fff;line-height:1;letter-spacing:-2px}
+.title-slide h1 em{font-style:normal;background:linear-gradient(90deg,#ffb74d,#ffd54f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.title-sub{font-size:clamp(14px,1.9vw,21px);color:rgba(255,255,255,.6);margin-top:12px}
+.goal-box{margin-top:24px;background:rgba(255,183,77,.09);border:1.5px solid rgba(255,183,77,.28);border-radius:16px;padding:16px 28px;display:inline-block;text-align:left}
+.goal-box p{color:#ffd54f;font-size:clamp(13px,1.5vw,17px);line-height:1.75}
+.sym-strip{display:flex;gap:10px;margin-top:26px;justify-content:center;flex-wrap:wrap}
+.sym-strip .sc{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:9px 15px;font-size:clamp(16px,2.6vw,28px);color:#ffb74d;font-weight:800}
+
+/* ── OVERVIEW ── */
+.ov-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;width:100%;max-width:860px}
+.ov-card{border-radius:13px;padding:13px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.09);transition:transform .18s}
+.ov-card:hover{transform:translateY(-3px)}
+.ov-sym{font-size:clamp(24px,3.8vw,48px);font-weight:900;line-height:1}
+.ov-disp{font-size:clamp(9px,1vw,13px);font-weight:700;opacity:.7}
+.ov-name{font-size:clamp(7px,.85vw,10px);opacity:.5;line-height:1.3;text-align:center}
+.ov-word{font-size:clamp(9px,1vw,12px);font-style:italic;font-weight:600}
+
+/* ── EXPLAIN ── */
+.explain-slide{background:#fff;flex-direction:column}
+.ex-left{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;width:240px;flex-shrink:0;padding:4px 0}
+.big-sym{font-size:clamp(68px,11vw,128px);font-weight:900;line-height:1;text-align:center}
+.mouth-wrap{background:#f9f9f9;border-radius:13px;padding:7px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.lip-lbl{font-size:10px;color:#888;text-align:center;line-height:1.6}
+.ex-right{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;padding:4px 0;min-height:0;gap:7px}
+.desc-card{border-radius:12px;padding:11px 15px}
+.desc-card .label{margin-bottom:5px}
+.desc-card p{font-size:clamp(12px,1.4vw,15px);line-height:1.55;color:#1a2a3a;font-weight:500}
+.howto{list-style:none;margin-top:5px;display:flex;flex-direction:column;gap:3px}
+.howto li{font-size:clamp(11px,1.25vw,13px);padding-left:16px;position:relative;color:#2a3a4a;line-height:1.4}
+.howto li::before{content:'→';position:absolute;left:0;opacity:.4;font-size:11px}
+.tip-box{border-radius:12px;padding:11px 15px;display:flex;gap:9px;align-items:flex-start;background:#fffbec;border-left:4px solid #f5a623}
+.tip-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.tip-text{font-size:clamp(11px,1.3vw,14px);line-height:1.5;font-weight:500;color:#3a2a00}
+.ex-words{display:flex;gap:7px;flex-wrap:wrap}
+.ex-chip{border-radius:10px;padding:8px 11px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:66px;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.ex-chip .ew{font-size:clamp(13px,1.8vw,19px);font-weight:700}
+.ex-chip .ei{font-size:clamp(9px,.95vw,11px);opacity:.55}
+.ctx{border-radius:9px;padding:8px 13px;font-size:clamp(10px,1.1vw,12px);color:#555}
+
+/* ── DRILL ── */
+.drill-slide{background:#fff8f0;flex-direction:column}
+.dr-left{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:200px;flex-shrink:0}
+.dr-sym{font-size:clamp(58px,9.5vw,108px);font-weight:900;line-height:1;text-align:center}
+.dr-right{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:2px 0;min-height:0}
+.repeat-instr{border-radius:12px;padding:11px 16px;margin-bottom:10px}
+.repeat-instr .ri-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.repeat-instr .ri-flow{display:flex;align-items:center;gap:10px;font-size:clamp(13px,1.6vw,17px);font-weight:600;flex-wrap:wrap}
+.ri-step{border-radius:8px;padding:5px 12px;white-space:nowrap}
+.ri-arrow{font-size:18px;opacity:.35}
+.word-rows{display:flex;flex-direction:column;gap:8px}
+.wr{display:flex;align-items:center;gap:12px;background:#fff;border-radius:11px;padding:10px 16px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.wr-n{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.wr-w{font-size:clamp(16px,2.5vw,28px);font-weight:700;flex:1}
+.wr-p{font-size:clamp(10px,1.2vw,14px);opacity:.45}
+.mp-box{border-radius:12px;padding:12px 16px}
+.mp-box .label{margin-bottom:8px}
+.mp-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mp-item{text-align:center}
+.mp-sym{font-size:clamp(11px,1.2vw,14px);font-weight:700;opacity:.6;margin-bottom:2px}
+.mp-word{font-size:clamp(17px,2.7vw,30px);font-weight:800}
+.mp-vs{font-size:16px;opacity:.25;font-weight:900}
+.mp-note{font-size:clamp(11px,1.2vw,14px);color:#555;align-self:center;max-width:220px;line-height:1.5}
+
+/* ── STUDENT DRILL ── */
+.stdrill-slide{background:#fffef0;flex-direction:column}
+.sd-instr{background:#fff;border-radius:13px;padding:13px 18px;border-left:5px solid #e65100;flex-shrink:0}
+.sd-instr h2{font-size:clamp(14px,1.7vw,19px);color:#5f1a00;margin-bottom:7px}
+.flow-steps{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.fs{display:flex;align-items:flex-start;gap:7px;font-size:clamp(11px,1.25vw,14px);line-height:1.45;flex:1;min-width:160px}
+.fs-n{background:#e65100;color:#fff;border-radius:50%;width:21px;height:21px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.word-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:10px}
+.wg{background:#fff;border-radius:12px;padding:13px 7px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.wg-w{font-size:clamp(18px,2.8vw,34px);font-weight:800}
+.wg-sym{font-size:clamp(10px,1.1vw,13px);font-weight:600;margin-top:3px}
+
+/* ── FEEDBACK ── */
+.fb-slide{background:#fff8f0;flex-direction:column}
+.fb-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+.fb-card{background:#fff;border-radius:13px;padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.fb-card h3{font-size:clamp(12px,1.4vw,15px);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.fb-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.fb-list li{font-size:clamp(11px,1.25vw,14px);line-height:1.45;padding-left:16px;position:relative;color:#2a2a3a}
+.fb-list li::before{content:'•';position:absolute;left:0;font-weight:700}
+.fb-pair{display:inline-block;background:#fff3e0;border-radius:6px;padding:2px 8px;font-weight:700;font-size:.95em;margin:0 2px}
+
+/* ── QUIZ Q ── */
+.quizq-slide{background:#fffbf2;flex-direction:column}
+.q-grid{display:flex;flex-direction:column;gap:12px;width:100%}
+.q-box{background:#fff;border-radius:13px;padding:15px 20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.q-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;opacity:.4;margin-bottom:5px}
+.q-text{font-size:clamp(13px,1.6vw,18px);font-weight:600;margin-bottom:11px;line-height:1.4;color:#1a1a2e}
+.q-opts{display:flex;gap:8px;flex-wrap:wrap}
+.q-opt{border-radius:8px;padding:7px 16px;font-size:clamp(12px,1.5vw,16px);font-weight:700;border:2px solid #ddd;background:#f7f7f7;color:#333;cursor:default}
+.think-banner{background:rgba(255,179,0,.12);border:1.5px solid rgba(255,179,0,.35);border-radius:12px;padding:12px 20px;text-align:center;font-size:clamp(13px,1.5vw,17px);color:#7a5500;font-weight:600;flex-shrink:0}
+
+/* ── QUIZ A ── */
+.quiza-slide{background:#f0fff4;flex-direction:column}
+.qa-box{background:#fff;border-radius:13px;padding:15px 20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.qa-opt{border-radius:8px;padding:7px 16px;font-size:clamp(12px,1.5vw,16px);font-weight:700;border:2px solid #ddd;background:#f7f7f7;color:#999;cursor:default}
+.qa-opt.correct{background:#e8f5e9;border-color:#2e7d52;color:#1a5c35}
+.qa-opt.correct::after{content:' ✓';font-weight:900}
+.qa-hint{font-size:clamp(10px,1.15vw,13px);color:#2e7d52;margin-top:7px;font-weight:500;line-height:1.5}
+
+/* ── SUMMARY ── */
+.summary-slide{background:linear-gradient(140deg,#1a0d00 0%,#2d1800 100%);flex-direction:column}
+.sum-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;padding:10px 26px;width:100%}
+.sum-card{border-radius:13px;padding:13px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px;box-shadow:0 3px 12px rgba(0,0,0,.22);transition:transform .18s}
+.sum-card:hover{transform:translateY(-3px)}
+.sc-sym{font-size:clamp(24px,4vw,52px);font-weight:900;color:#fff}
+.sc-disp{font-size:clamp(9px,1vw,12px);color:rgba(255,255,255,.5);font-weight:600}
+.sc-ws{font-size:clamp(8px,.9vw,11px);color:rgba(255,255,255,.38);font-style:italic;line-height:1.6}
+.sum-foot{text-align:center;color:rgba(255,255,255,.6);font-size:clamp(12px,1.35vw,16px);padding:8px 26px 4px}
+.sum-foot strong{color:#ffd54f}
+.nxt-box{background:rgba(255,255,255,.06);border-radius:12px;padding:11px 22px;margin-top:10px;display:inline-block}
+.nxt-box p{color:rgba(255,255,255,.5);font-size:clamp(11px,1.2vw,14px);line-height:1.6}
+.nxt-box strong{color:#ffd54f}
+
+/* ── FREE CONVERSATION ── */
+.freeconv-slide{background:linear-gradient(140deg,#1a1200 0%,#2d2000 55%,#1a1200 100%);flex-direction:column}
+.fc-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:0 36px 16px;text-align:center}
+.fc-badge{background:rgba(255,200,50,.15);border:1.5px solid rgba(255,200,50,.4);border-radius:20px;padding:5px 16px;font-size:clamp(10px,1.1vw,13px);font-weight:700;color:#ffd740;letter-spacing:1.5px;text-transform:uppercase}
+.fc-topic{font-size:clamp(32px,6vw,72px);font-weight:900;color:#fff;line-height:1.1;max-width:800px}
+.fc-questions{display:flex;flex-direction:column;gap:9px;margin-top:4px;width:100%;max-width:600px}
+.fc-q{background:rgba(255,255,255,.07);border-radius:12px;padding:12px 20px;font-size:clamp(13px,1.6vw,18px);color:rgba(255,255,255,.85);font-weight:500;text-align:left;border-left:4px solid #ffd740}
+.fc-note{font-size:clamp(10px,1.1vw,13px);color:rgba(255,255,255,.35);margin-top:4px;line-height:1.6}
+.fc-teacher{background:rgba(255,200,50,.08);border:1px solid rgba(255,200,50,.2);border-radius:12px;padding:10px 20px;font-size:clamp(10px,1.15vw,13px);color:rgba(255,200,50,.7);width:100%;max-width:600px;text-align:left;line-height:1.7}
+.fc-teacher strong{color:#ffd740}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="progress"></div>
+  <div id="slides"></div>
+  <nav id="nav">
+    <button id="btn-prev" onclick="move(-1)">◀ Prev</button>
+    <span id="counter"></span>
+    <button id="btn-next" onclick="move(1)">Next ▶</button>
+    <button onclick="toggleFS()">⛶ Fullscreen</button>
+  </nav>
+</div>
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════
+const PH = [
+  {
+    sym:'iː', disp:'/iː/', color:'#00897B', light:'#E0F2F1', dark:'#004D40',
+    name:'Long High Front Vowel',
+    desc:'Lips very spread, mouth nearly closed, tongue as high and front as possible — hold it long!',
+    howto:['Spread your lips wide into a big, flat smile','Keep your mouth almost closed — just a tiny gap','Raise your tongue very high and push it toward the front','Hold the sound — it lasts longer than it feels natural to!'],
+    tip:'Japanese い is close, but too short! For /iː/ you must HOLD it. "see" takes almost twice as long as Japanese し.',
+    approx:'Like Japanese い — but held much longer',
+    context:'Common spellings: <b>ee</b> (see, feet), <b>ea</b> (beat, tea), <b>e</b> (me, he), <b>ie</b> (field)',
+    ex:[{w:'see',p:'/siː/'},{w:'feet',p:'/fiːt/'},{w:'beat',p:'/biːt/'},{w:'tea',p:'/tiː/'},{w:'field',p:'/fiːld/'}],
+    pair:{s:'/ɪ/',w1:'beat',w2:'bit',lbl:'LONG vs. SHORT'},
+    mouth:{lipOpenness:.18,lipWidth:.85,tongueHeight:.92,tongueBackness:.12,rounded:false},
+    lipd:'Lips: VERY WIDE SPREAD',tonged:'Tongue: VERY HIGH + FRONT',
+  },
+  {
+    sym:'uː', disp:'/uː/', color:'#1565C0', light:'#E3F2FD', dark:'#0D47A1',
+    name:'Long High Back Vowel',
+    desc:'Lips fully rounded and pushed forward, tongue very high and back — hold it long!',
+    howto:['Round your lips into a tight circle and push them forward','Keep your mouth nearly closed','Pull your tongue high and far back in your mouth','Hold the sound — twice as long as Japanese ウ'],
+    tip:'Japanese ウ has FLAT lips. For /uː/ your lips must be FULLY ROUND and pushed forward — like blowing out a candle. "moon" ≠ Japanese ムーン!',
+    approx:'Like Japanese ウ — but fully rounded lips, held much longer',
+    context:'Common spellings: <b>oo</b> (moon, food), <b>ue</b> (blue, clue), <b>ew</b> (new, flew), <b>u</b> (rude)',
+    ex:[{w:'moon',p:'/muːn/'},{w:'food',p:'/fuːd/'},{w:'blue',p:'/bluː/'},{w:'true',p:'/truː/'},{w:'shoe',p:'/ʃuː/'}],
+    pair:{s:'/ʊ/',w1:'boot',w2:'book',lbl:'LONG vs. SHORT'},
+    mouth:{lipOpenness:.20,lipWidth:.26,tongueHeight:.88,tongueBackness:.88,rounded:true},
+    lipd:'Lips: FULLY ROUNDED + FORWARD',tonged:'Tongue: VERY HIGH + BACK',
+  },
+  {
+    sym:'ɑː', disp:'/ɑː/', color:'#BF360C', light:'#FBE9E7', dark:'#7a1800',
+    name:'Long Low Back Vowel',
+    desc:'Mouth wide open, no lip rounding at all, tongue flat and low at the back — hold it long!',
+    howto:['Drop your jaw as far down as possible — like a doctor saying "open wide"','Keep your lips completely neutral — no rounding, no spreading','Let your tongue lie flat and low at the back of your mouth','Hold the sound — long and open'],
+    tip:'Think of the sound you make when a doctor checks your throat: "Ahhh!" — that\'s /ɑː/. Wide open, relaxed, long.',
+    approx:'Like a very open, long ア — jaw drops much further than normal',
+    context:'Common spellings: <b>ar</b> (car, far, park), <b>a</b> in some words (father, calm, bath in BrE)',
+    ex:[{w:'car',p:'/kɑː/'},{w:'far',p:'/fɑː/'},{w:'park',p:'/pɑːk/'},{w:'heart',p:'/hɑːt/'},{w:'father',p:'/ˈfɑːðər/'}],
+    pair:{s:'/ʌ/',w1:'cart',w2:'cut',lbl:'LONG vs. SHORT'},
+    mouth:{lipOpenness:.88,lipWidth:.50,tongueHeight:.05,tongueBackness:.78,rounded:false},
+    lipd:'Lips: NEUTRAL (wide open)',tonged:'Tongue: VERY LOW + BACK',
+  },
+  {
+    sym:'ɔː', disp:'/ɔː/', color:'#2E7D32', light:'#E8F5E9', dark:'#1a4a1e',
+    name:'Long Mid Back Vowel',
+    desc:'Lips rounded into an oval, jaw moderately open, tongue mid-back — hold it long!',
+    howto:['Round your lips into an oval or loose "O" shape','Open your jaw moderately — about one to two finger-widths','Pull your tongue to the back of your mouth at middle height','Hold the sound — longer than Japanese オ'],
+    tip:'This sounds like a long, rounded "aw". British "ball", "call", "walk" all use /ɔː/. Round those lips!',
+    approx:'Like a rounded, long オ — but more open and held longer',
+    context:'Common spellings: <b>al</b> (ball, call, walk), <b>aw</b> (saw, law), <b>or</b> (for, more), <b>oor</b> (floor)',
+    ex:[{w:'ball',p:'/bɔːl/'},{w:'call',p:'/kɔːl/'},{w:'saw',p:'/sɔː/'},{w:'more',p:'/mɔː/'},{w:'floor',p:'/flɔː/'}],
+    pair:{s:'/ɒ/',w1:'hall',w2:'hot',lbl:'LONG vs. SHORT'},
+    mouth:{lipOpenness:.52,lipWidth:.36,tongueHeight:.32,tongueBackness:.74,rounded:true},
+    lipd:'Lips: ROUNDED (oval shape)',tonged:'Tongue: MID + BACK',
+  },
+  {
+    sym:'ɜː', disp:'/ɜː/', color:'#6A1B9A', light:'#F3E5F5', dark:'#38006b',
+    name:'Long Mid Central Vowel',
+    desc:'Lips neutral, jaw moderately open, tongue in the very centre of the mouth — hold it long!',
+    howto:['Keep your lips completely neutral — no spreading, no rounding','Open your jaw about one finger-width','Place your tongue in the dead centre of your mouth','Hold the sound — it\'s a long, steady "ur"'],
+    tip:'⚠️ No equivalent in Japanese! This is the "er" sound in "bird", "word", "heard". Do NOT add an "r" sound — just hold the vowel steady.',
+    approx:'No direct equivalent — a long, tense "uh" held in the centre of the mouth',
+    context:'Common spellings: <b>ir</b> (bird, first), <b>er</b> (her, term), <b>ur</b> (turn, burn), <b>or</b> (word, work)',
+    ex:[{w:'bird',p:'/bɜːd/'},{w:'word',p:'/wɜːd/'},{w:'heard',p:'/hɜːd/'},{w:'turn',p:'/tɜːn/'},{w:'first',p:'/fɜːst/'}],
+    pair:{s:'/ə/',w1:'bird',w2:'about',lbl:'STRESSED vs. UNSTRESSED'},
+    mouth:{lipOpenness:.42,lipWidth:.54,tongueHeight:.50,tongueBackness:.48,rounded:false},
+    lipd:'Lips: NEUTRAL',tonged:'Tongue: MID + CENTRAL (tense)',
+  },
+];
+
+const QUIZ = [
+  {
+    q:'Which word contains the /iː/ sound?',
+    opts:['sit','set','see','sow'],
+    ans:2,
+    hint:'/iː/ needs very spread lips and a HIGH tongue. "see" — hold it long! "sit" uses /ɪ/ (short).'
+  },
+  {
+    q:'The symbol /ɑː/ represents the vowel sound in which word?',
+    opts:['hot','hat','heart','hit'],
+    ans:2,
+    hint:'/ɑː/ — jaw wide open, tongue low and back, no lip rounding. "heart" = /hɑːt/. Feel your jaw drop!'
+  },
+  {
+    q:'Which word contains /ɔː/?',
+    opts:['hot','hat','hall','hill'],
+    ans:2,
+    hint:'/ɔː/ needs rounded lips! "hall" = /hɔːl/. "hot" uses /ɒ/ — similar but shorter and more open.'
+  },
+  {
+    q:'Which word uses the /ɜː/ sound?',
+    opts:['bird','bad','bed','bud'],
+    ans:0,
+    hint:'/ɜː/ — neutral lips, tongue in the centre, hold it long. "bird" = /bɜːd/. No "r" curl needed!'
+  },
+];
+
+const DRILL_WORDS = [
+  {w:'see',s:'/iː/',c:'#00897B'},{w:'moon',s:'/uː/',c:'#1565C0'},
+  {w:'car',s:'/ɑː/',c:'#BF360C'},{w:'ball',s:'/ɔː/',c:'#2E7D32'},
+  {w:'bird',s:'/ɜː/',c:'#6A1B9A'},{w:'feet',s:'/iː/',c:'#00897B'},
+  {w:'food',s:'/uː/',c:'#1565C0'},{w:'park',s:'/ɑː/',c:'#BF360C'},
+  {w:'call',s:'/ɔː/',c:'#2E7D32'},{w:'word',s:'/ɜː/',c:'#6A1B9A'},
+  {w:'tea',s:'/iː/',c:'#00897B'},{w:'blue',s:'/uː/',c:'#1565C0'},
+];
+
+// ═══════════════════════════════════════════
+//  MOUTH SVG
+// ═══════════════════════════════════════════
+function mSVG(m,w=188,h=120){
+  const cx=w/2,fCy=h*.52,mCy=h*.60;
+  const hW=(w*.13)+(w*.38-w*.13)*m.lipWidth;
+  const op=m.lipOpenness*h*.30;
+  const uY=mCy-op/2,lY=mCy+op/2,lx=cx-hW,rx=cx+hW;
+  let uP;
+  if(m.rounded){uP=`M ${lx},${uY} Q ${cx},${uY-hW*.12} ${rx},${uY}`;}
+  else{const bH=hW*.20,dH=hW*.08;uP=`M ${lx},${uY} C ${lx+hW*.28},${uY-bH} ${cx-hW*.14},${uY-dH} ${cx},${uY-dH*.4} C ${cx+hW*.14},${uY-dH} ${rx-hW*.28},${uY-bH} ${rx},${uY}`;}
+  const lC2=hW*.26,lP=`M ${lx},${lY} Q ${cx},${lY+lC2} ${rx},${lY}`;
+  const fP=`${uP} L ${rx},${lY} Q ${cx},${lY+lC2} ${lx},${lY} Z`,LC='#C05060';
+  let th='',tg='';
+  if(m.lipOpenness>=.13){const t=op*.85;th=`<rect x="${lx+2}" y="${uY+1}" width="${hW*2-4}" height="${t}" rx="3" fill="white" opacity=".95"/><line x1="${lx+2}" y1="${uY+t*.45}" x2="${rx-2}" y2="${uY+t*.45}" stroke="#ddd" stroke-width=".5"/>`;}
+  if(m.lipOpenness>.28){const tW=Math.min(hW*1.4,hW*2-6),tY=lY-op*(.18+m.tongueHeight*.18),tRy=op*.28;tg=`<ellipse cx="${cx}" cy="${tY}" rx="${tW/2}" ry="${tRy}" fill="#E08080" opacity=".82"/>`;}
+  const nCy=mCy-h*.25;
+  const ns=`<ellipse cx="${cx-5}" cy="${nCy}" rx="3.5" ry="2.5" fill="#E0AA80" opacity=".55"/><ellipse cx="${cx+5}" cy="${nCy}" rx="3.5" ry="2.5" fill="#E0AA80" opacity=".55"/><path d="M ${cx-5},${nCy-1} Q ${cx},${nCy-6} ${cx+5},${nCy-1}" fill="none" stroke="#E0AA80" stroke-width="1.4" opacity=".35"/>`;
+  const co=m.lipOpenness>.02?`<line x1="${lx}" y1="${uY}" x2="${lx}" y2="${lY}" stroke="${LC}" stroke-width="2" stroke-linecap="round"/><line x1="${rx}" y1="${uY}" x2="${rx}" y2="${lY}" stroke="${LC}" stroke-width="2" stroke-linecap="round"/>`:'';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><ellipse cx="${cx}" cy="${fCy}" rx="${w*.44}" ry="${h*.44}" fill="#FFE4C4" stroke="#F4C89E" stroke-width="2"/>${ns}${th}${tg}<path d="${fP}" fill="${LC}" opacity="${m.lipOpenness<.05?.28:.13}"/>${co}<path d="${uP}" fill="none" stroke="${LC}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="${lP}" fill="none" stroke="${LC}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+// ═══════════════════════════════════════════
+//  BUILDERS
+// ═══════════════════════════════════════════
+
+function titleHTML(){
+  return `<div class="slide title-slide">
+  <div style="max-width:800px;padding:18px">
+    <div style="font-size:clamp(11px,1.3vw,14px);color:#ffb74d;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px">English Pronunciation Lesson</div>
+    <h1><em>Long</em> Vowels（長母音）</h1>
+    <p class="title-sub">Master the 5 essential long vowel sounds of British English</p>
+    <div class="goal-box">
+      <p>🎯 <strong>Today's Goal:</strong> Understand and produce all 5 long vowel（母音）sounds correctly</p>
+      <p style="margin-top:4px">⏱ 45 minutes &nbsp;·&nbsp; 19 slides &nbsp;·&nbsp; Use ◀ ▶ or arrow keys to navigate</p>
+    </div>
+    <div class="sym-strip">${PH.map(p=>`<div class="sc">${p.disp}</div>`).join('')}</div>
+    <p style="color:rgba(255,255,255,.3);font-size:11px;margin-top:18px">Teacher demonstrates each sound — students repeat</p>
+  </div></div>`;
+}
+
+function overviewHTML(){
+  const cards=PH.map(p=>`
+    <div class="ov-card" style="background:${p.light}">
+      <div class="ov-sym" style="color:${p.color}">${p.sym}</div>
+      <div class="ov-disp" style="color:${p.color}">${p.disp}</div>
+      ${mSVG(p.mouth,84,54)}
+      <div class="ov-name" style="color:${p.dark}">${p.name.replace(' Vowel','').replace('Long ','')}</div>
+      <div class="ov-word" style="color:${p.color}">${p.ex[0].w}</div>
+    </div>`).join('');
+  return `<div class="slide" style="background:#fff8f0;flex-direction:column">
+  <div class="s-head" style="background:#5f2800">Today's 5 Long Vowels <span class="badge">Overview</span></div>
+  <div class="s-body" style="flex-direction:column;align-items:center;justify-content:center;gap:12px">
+    <div class="ov-grid" style="max-width:860px;width:100%">${cards}</div>
+    <p style="color:#999;font-size:11px">Each vowel keeps its colour throughout this lesson &nbsp;·&nbsp; The <b>ː</b> symbol means "hold it long!"</p>
+  </div></div>`;
+}
+
+function explainHTML(p,idx){
+  const words=p.ex.map(e=>`
+    <div class="ex-chip" style="background:${p.light};border:1.5px solid ${p.color}22">
+      <div class="ew" style="color:${p.dark}">${e.w}</div>
+      <div class="ei">${e.p}</div>
+    </div>`).join('');
+  return `<div class="slide explain-slide">
+  <div class="s-head" style="background:${p.color}">${p.disp} — ${p.name} <span class="badge">${idx} / ${PH.length}</span></div>
+  <div class="s-body">
+    <div class="ex-left">
+      <div class="big-sym" style="color:${p.color}">${p.sym}</div>
+      <div class="mouth-wrap">${mSVG(p.mouth,166,106)}</div>
+      <div class="lip-lbl"><span style="color:${p.color};font-weight:700">${p.lipd}</span><br>${p.tonged}</div>
+    </div>
+    <div class="ex-right">
+      <div class="desc-card" style="background:${p.light}">
+        <div class="label">How to say it</div>
+        <p>${p.desc}</p>
+        <ul class="howto">${p.howto.map(h=>`<li>${h}</li>`).join('')}</ul>
+      </div>
+      <div class="tip-box"><div class="tip-icon">💡</div><div class="tip-text">${p.tip}</div></div>
+      <div>
+        <div class="label">Example words</div>
+        <div class="ex-words">${words}</div>
+      </div>
+      <div class="ctx" style="background:${p.light}"><span style="color:${p.color};font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px">Spellings: </span>${p.context}</div>
+    </div>
+  </div></div>`;
+}
+
+function drillHTML(p,idx){
+  const rows=p.ex.slice(0,3).map((e,i)=>`
+    <div class="wr" style="border-left:4px solid ${p.color}">
+      <div class="wr-n" style="background:${p.color}">${i+1}</div>
+      <div class="wr-w" style="color:${p.dark}">${e.w}</div>
+      <div class="wr-p">${e.p}</div>
+    </div>`).join('');
+  const pairSec=`<div class="mp-box" style="background:${p.light};border:1.5px solid ${p.color}22">
+      <div class="label">Minimal Pair — ${p.pair.lbl}</div>
+      <div class="mp-row">
+        <div class="mp-item"><div class="mp-sym">${p.disp}</div><div class="mp-word" style="color:${p.color}">${p.pair.w1}</div></div>
+        <div class="mp-vs">VS</div>
+        <div class="mp-item"><div class="mp-sym">${p.pair.s}</div><div class="mp-word" style="color:#888">${p.pair.w2}</div></div>
+        <div class="mp-note">Teacher says both words. Students listen, then repeat each one.</div>
+      </div>
+    </div>`;
+  return `<div class="slide drill-slide">
+  <div class="s-head" style="background:#5f2800">Repeat After Me — ${p.disp} <span class="badge" style="background:rgba(255,255,255,.14)">Drill ${idx}</span></div>
+  <div class="s-body">
+    <div class="dr-left">
+      <div class="dr-sym" style="color:${p.color}">${p.sym}</div>
+      <div style="font-size:clamp(11px,1.3vw,15px);color:#555;text-align:center">${p.disp}</div>
+      ${mSVG(p.mouth,154,98)}
+      <div style="font-size:10px;color:#777;text-align:center;line-height:1.6">${p.lipd}<br>${p.tonged}</div>
+    </div>
+    <div class="dr-right">
+      <div>
+        <div class="repeat-instr" style="background:${p.light};border:1.5px solid ${p.color}30">
+          <div class="ri-label" style="color:${p.color}">Drill flow</div>
+          <div class="ri-flow">
+            <div class="ri-step" style="background:${p.color};color:#fff">Teacher says</div>
+            <div class="ri-arrow">→</div>
+            <div class="ri-step" style="background:#fff3e0;color:#5f1a00">Whole class repeats</div>
+            <div class="ri-arrow">→</div>
+            <div class="ri-step" style="background:#fce4ec;color:#5f0030">Individual student</div>
+          </div>
+        </div>
+        <div class="word-rows">${rows}</div>
+      </div>
+      ${pairSec}
+    </div>
+  </div></div>`;
+}
+
+function stdDrillHTML(){
+  const cards=DRILL_WORDS.map(pw=>`
+    <div class="wg">
+      <div class="wg-w" style="color:${pw.c}">${pw.w}</div>
+      <div class="wg-sym" style="color:${pw.c}">${pw.s}</div>
+    </div>`).join('');
+  return `<div class="slide stdrill-slide">
+  <div class="s-head" style="background:#5f1a00">Student Drill — Now You Try! <span class="badge" style="background:rgba(255,255,255,.14)">Speaking Practice</span></div>
+  <div class="s-body" style="flex-direction:column;gap:11px">
+    <div class="sd-instr">
+      <h2>🎤 Teacher-led pronunciation drill</h2>
+      <div class="flow-steps">
+        <div class="fs"><span class="fs-n">1</span><span>Teacher points to a word on screen and says it clearly</span></div>
+        <div class="fs"><span class="fs-n">2</span><span>Students repeat as a class — focus on length and mouth shape</span></div>
+        <div class="fs"><span class="fs-n">3</span><span>Teacher calls on individual students to repeat alone</span></div>
+        <div class="fs"><span class="fs-n">4</span><span>Teacher gives feedback: "Hold it longer!" / "Round your lips more!"</span></div>
+      </div>
+    </div>
+    <div class="word-grid">${cards}</div>
+    <p style="color:#aaa;font-size:11px;text-align:center">Each word shows its vowel symbol — use this for feedback reference</p>
+  </div></div>`;
+}
+
+function feedbackHTML(){
+  return `<div class="slide fb-slide">
+  <div class="s-head" style="background:#3a1e00">Feedback Guide — Common Student Errors <span class="badge" style="background:rgba(255,255,255,.14)">Teacher Reference</span></div>
+  <div class="s-body" style="flex-direction:column;gap:11px">
+    <div class="fb-grid">
+      <div class="fb-card">
+        <h3 style="color:#00897B">⚠️ /iː/ — Most common mistakes</h3>
+        <ul class="fb-list">
+          <li>Cutting it too short → remind: "Hold it! Stretch the sound!"</li>
+          <li>Using /ɪ/ instead → compare <span class="fb-pair">beat /iː/</span> vs <span class="fb-pair">bit /ɪ/</span></li>
+          <li>Not spreading lips enough → "Smile wide and keep smiling while you say it"</li>
+          <li>Tip: Have students hold a finger in front of their mouth — no air should come out</li>
+        </ul>
+      </div>
+      <div class="fb-card">
+        <h3 style="color:#1565C0">⚠️ /uː/ — Most common mistakes</h3>
+        <ul class="fb-list">
+          <li>Flat lips like Japanese ウ → remind: "Push your lips forward into a circle!"</li>
+          <li>Using /ʊ/ instead → compare <span class="fb-pair">boot /uː/</span> vs <span class="fb-pair">book /ʊ/</span></li>
+          <li>Not holding it long enough → "Stretch it — mooooon!"</li>
+          <li>Tip: Ask students to pretend they're blowing out a birthday candle</li>
+        </ul>
+      </div>
+      <div class="fb-card">
+        <h3 style="color:#6A1B9A">⚠️ /ɜː/ — Most common mistakes</h3>
+        <ul class="fb-list">
+          <li>Adding an "r" sound → remind: "No r-curl! Just hold the vowel steady"</li>
+          <li>Using /e/ or /ə/ → compare <span class="fb-pair">bird /ɜː/</span> vs <span class="fb-pair">bed /e/</span></li>
+          <li>Too short → "Hold it — biiiird!"</li>
+          <li>Tip: This is the hardest long vowel. Encourage by saying "This sound doesn't exist in Japanese — you're learning something completely new!"</li>
+        </ul>
+      </div>
+      <div class="fb-card">
+        <h3 style="color:#2E7D32">✅ Positive feedback phrases</h3>
+        <ul class="fb-list">
+          <li>"Great — I can hear you holding it longer!"</li>
+          <li>"Your lips were perfectly rounded that time!"</li>
+          <li>"Almost — try stretching it just a little more."</li>
+          <li>"Listen to the difference: <em>bit</em> vs <em>beat</em> — can you feel it?"</li>
+          <li>"That /ɜː/ was perfect — neutral lips, steady sound!"</li>
+        </ul>
+      </div>
+    </div>
+  </div></div>`;
+}
+
+function quizQHTML(){
+  const qs=QUIZ.map((q,i)=>`
+    <div class="q-box">
+      <div class="q-num">Question ${i+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map(o=>`<div class="q-opt">${o}</div>`).join('')}</div>
+    </div>`).join('');
+  return `<div class="slide quizq-slide">
+  <div class="s-head" style="background:#5f3a1e">Mini Quiz — Questions <span class="badge" style="background:rgba(255,255,255,.14)">Think first!</span></div>
+  <div class="s-body" style="flex-direction:column;justify-content:space-evenly;gap:10px">
+    <div class="think-banner">🤔 Read each question — think about your answer before the next slide!</div>
+    <div class="q-grid">${qs}</div>
+  </div></div>`;
+}
+
+function quizAHTML(){
+  const qs=QUIZ.map((q,i)=>`
+    <div class="qa-box">
+      <div class="q-num">Question ${i+1} — Answer</div>
+      <div class="q-text" style="margin-bottom:8px">${q.q}</div>
+      <div class="q-opts" style="margin-bottom:7px">${q.opts.map((o,ci)=>`<div class="qa-opt${ci===q.ans?' correct':''}">${o}</div>`).join('')}</div>
+      <div class="qa-hint">💡 ${q.hint}</div>
+    </div>`).join('');
+  return `<div class="slide quiza-slide">
+  <div class="s-head" style="background:#1e5f3a">Mini Quiz — Answers <span class="badge" style="background:rgba(255,255,255,.14)">How did you do?</span></div>
+  <div class="s-body" style="flex-direction:column;justify-content:space-evenly;gap:10px">
+    <div class="q-grid">${qs}</div>
+  </div></div>`;
+}
+
+function summaryHTML(){
+  return `<div class="slide summary-slide">
+  <div class="s-head" style="background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.09)">
+    <span style="color:#fff">Summary — Long Vowels（長母音）</span>
+    <span class="badge" style="background:rgba(255,255,255,.1);color:#ffd54f">Lesson Complete 🎉</span>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+    <p style="color:rgba(255,255,255,.5);font-size:clamp(12px,1.35vw,16px);margin-bottom:14px">All 5 long vowels — hold each one and use the correct mouth shape!</p>
+    <div class="sum-grid">${PH.map(p=>`
+      <div class="sum-card" style="background:${p.color}">
+        <div class="sc-sym">${p.sym}</div>
+        <div class="sc-disp">${p.disp}</div>
+        <div class="sc-ws">${p.ex.slice(0,3).map(e=>e.w).join(' · ')}</div>
+      </div>`).join('')}</div>
+    <div class="sum-foot">
+      <p>Key rule: <strong>Long vowels must be HELD</strong> — longer than feels natural for Japanese speakers! 🎤</p>
+      <div class="nxt-box">
+        <p>Next lesson: <strong>Diphthongs（二重母音）</strong> — /eɪ/ /aɪ/ /ɔɪ/ /əʊ/ /aʊ/</p>
+        <p style="margin-top:3px">Two vowel sounds that glide smoothly into one another.</p>
+      </div>
+    </div>
+  </div></div>`;
+}
+
+function freeConvHTML(){
+  return `<div class="slide freeconv-slide">
+  <div class="s-head" style="background:#2d1f00;border-top:2px solid rgba(255,200,50,.25)">
+    <span style="color:#ffd740">💬 Free Conversation</span>
+    <span class="badge" style="background:rgba(255,200,50,.18);color:#ffd740">1–3 min each</span>
+  </div>
+  <div class="fc-body">
+    <div class="fc-badge">Today's Topic</div>
+    <div class="fc-topic">Guilty Pleasures</div>
+    <div class="fc-questions">
+      <div class="fc-q">🍫 Do you have a guilty pleasure? What is it?</div>
+      <div class="fc-q">📺 Any TV shows, music, or food you secretly enjoy?</div>
+      <div class="fc-q">😄 Why do you think people feel "guilty" about it?</div>
+    </div>
+    <p class="fc-note">The topic doesn't need to relate to today's pronunciation theme — just have a natural conversation!</p>
+    <div class="fc-teacher">
+      <strong>Teacher guide:</strong> Talk with each student individually for 1–3 minutes.<br>
+      Correct pronunciation naturally — don't interrupt the conversation flow.<br>
+      Use follow-up questions to keep the conversation going.
+    </div>
+  </div></div>`;
+}
+
+// ═══════════════════════════════════════════
+//  BUILD
+// ═══════════════════════════════════════════
+function build(){
+  const c=document.getElementById('slides');
+  let h=titleHTML()+overviewHTML();
+  PH.forEach((p,i)=>{h+=explainHTML(p,i+1);h+=drillHTML(p,i+1);});
+  h+=stdDrillHTML()+feedbackHTML()+quizQHTML()+quizAHTML()+summaryHTML()+freeConvHTML();
+  c.innerHTML=h;
+}
+
+let cur=0,SL=[];
+function updateUI(){
+  SL.forEach((s,i)=>s.classList.toggle('active',i===cur));
+  document.getElementById('counter').textContent=`${cur+1} / ${SL.length}`;
+  document.getElementById('progress').style.width=`${(cur+1)/SL.length*100}%`;
+  document.getElementById('btn-prev').disabled=cur===0;
+  document.getElementById('btn-next').disabled=cur===SL.length-1;
+}
+function move(d){const n=Math.max(0,Math.min(SL.length-1,cur+d));if(n!==cur){cur=n;updateUI();}}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')move(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')move(-1);
+});
+function toggleFS(){
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen();
+}
+build();
+SL=Array.from(document.querySelectorAll('.slide'));
+updateUI();
+</script>
+</body>
+</html>
